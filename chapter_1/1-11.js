@@ -4,7 +4,7 @@ var user = {
   };
   
   var changeName = function(user, newName) {
-    return {                            // 새로운 object를 마들어 그 주소를 return 함.
+    return {                            // 새로운 object를 만들어 그 주소를 return 함.
       name: newName,
       gender: user.gender,
     };
