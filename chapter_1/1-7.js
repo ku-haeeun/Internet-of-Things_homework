@@ -1,4 +1,4 @@
-var a = 10;
+var a = 10; //불변
 var b = a;
 
 var obj1 = { c: 10, d: 'ddd' };
