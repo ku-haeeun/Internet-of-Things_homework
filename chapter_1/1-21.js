@@ -30,3 +30,4 @@ arr1.reduce(function(p, c, i) {
 arr2.reduce(function(p, c, i) {
   return p + c + i;
 }, ''); // 11
+//
