@@ -8,3 +8,4 @@ function a() {
     console.log(b); // (3)
   }
   a();
+  //
