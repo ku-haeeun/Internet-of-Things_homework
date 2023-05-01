@@ -13,4 +13,4 @@ function Person(name, gender) {
   var by = new Student('보영', 'female', '단국대');
   var jn = new Employee('재난', 'male', '구골');
 
-  //생성자 내부에서 다른 생성자를 호출
+  //생성자 내부에서 다른 생성자를 호출.
