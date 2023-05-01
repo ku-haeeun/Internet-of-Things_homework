@@ -8,5 +8,3 @@ var obj = {
     },
   };
   obj.outer();
-
-  
