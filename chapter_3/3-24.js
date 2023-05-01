@@ -3,4 +3,4 @@ const max = Math.max(...numbers);
 const min = Math.min(...numbers);
 console.log(max, min); // 45 3
 
-//es6의 펼치기 연산자 활용
+//es6의 펼치기 연산자 활용.

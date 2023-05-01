@@ -11,3 +11,4 @@ var obj = {
   };
   obj.logThisLater1(); // Window { ... }
   obj.logThisLater2(); // obj { logThis: f, ... }
+  

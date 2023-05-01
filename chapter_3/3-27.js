@@ -19,3 +19,4 @@ var obj = {
     },
   };
   obj.outer();
+  
