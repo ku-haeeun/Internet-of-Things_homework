@@ -1,32 +1,214 @@
 # __IOT_homework__
 + 단원별 정리
-## **Chapter 1**
+# ***Chapter 1***
 
-### *1. 데이터 타입 종류*
-+  기본형(원시형, primitive type)
-    + number(숫자), string(문자열), boolean(불리언), null, undefined, symbol(심볼, ES6)
-+ 참조형(reference type)
-    + object(객체), array(배열), Map (ES6), WeakMap (ES6), Set (ES6), WeakSet (ES6)
+# 불변값과 가변값
 
-### *2. 메모리*
-+ 자바스크립트는 숫자의 경우 정수형(integer)인지 부동소수형(float)인지를 구분하지 않고 64bit, 즉 8Byte를 확보한다.
-+ 각 비트는 고유한 식별자를 지닌다. 바이트 역시 시작하는 비트의 식별자로 위치를 파악할 수 있다.
-+ 모든 데이터는 바이트 단위의 식별자, 더 정확하게는 메모리 주소값 (memory address) 을 통해 서로 구분하고 연결할 수 있다.
+## 1. 기본형 데이터와 참조형 데이터
 
-### *3. 변수 선언과 데이터 할당*
-1. 변수 선언
+### 1) 상수와 불변값
+
+- 불변값과 상수를 같은 개념으로 오해하기 쉬움
+- 변수와 상수를 구분 짓는 변경 가능성의 대상은 변수 영역의 메모리 (한번 데이터 할당이 이뤄진 변수 공간에 다른 데이터를 재할당 할 수 있는지 여부)
+- `불변성 여부를 구분할 때 변경 가능성의 대상은 데이터 영역`
+  - 기본형 데이터인 숫자, 문자열, boolean, null, undefined, Symbol 모두 불변값
+    ```js
+    var a = "abc";
+    a = a + "def"; // 데이터 영역의 'abc'가 'abcdef' 로 변경 되는 것이 아닌
+    // 새로운 문자열 'abcdef'를 만들어 그 주소를 변수 a에 저장
+    ```
+    ![](https://velog.velcdn.com/images/ses2201/post/06161e98-3179-415b-9d0e-9972a80030fc/image.jpg)
+
+### 2) 가변값
+
+- 참조형데이터를 변수에 할당하는 과정
+  - 기본형 데이터와의 차이는 '객체의 변수(프로퍼티) 영역'이 별도로 존재한다는 점.
+  - `데이터 영역에 저장된 값은 모두 불변값이나, 변수영역에는 다른 값을 얼마든지 대입할 수 있음.` 이부분 때문에 참조형데이터는 불변하지 않다, `가변값이다` 라고 하는 것임
+    ```js
+    var obj1={
+      a: 1;
+      b: 'bbb';
+    }
+    obj1.a = 2; // 새로운 객체가 만들어져서 할당되는 것이 아닌, 객체 변수 영역의 값이 변경
+    ```
+    ![](https://velog.velcdn.com/images/ses2201/post/794a3059-f2c4-497f-8ade-b17df9e24214/image.jpg)
+
+### 3) 변수복사비교
+
+```js
+var a = 10;
+var b = a;
+var obj1 = { c: 10, d: "ddd" };
+var obj2 = obj1;
+
+b = 15;
+obj2.c = 20;
+
+console.log(a === b); // false
+console.log(obj1 === obj2); // true
 ```
-var a;
-// 변할 수 있는 데이터를 만들겠다.
-// 이 데이터의 식별자는 'a'로 한다.
+
+변수 a와 b는 서로 다른 주소를 바라보게 되었기 때문에, a === b를 console로 찍었을 때, false가 나온다. 반면 obj1과 obj2는 객체 안의 프로퍼티 값이 바뀌었을 뿐, 여전히 같은 값을 바라보고 있기 때문에 true가 나온다.
+
+---
+
+## 2. 불변객체
+
+### 1) 어떤 상황에서 불변객체가 필요할까?
+
+- 값으로 전달받은 객체에 변경을 가하더라도 원본 객체는 변하지 않아야 하는 경우가 발생
+
+- 문제상황)
+
+  ```js
+  var user = {
+    name: "Haen",
+    gender: "female",
+  };
+
+  var changeName = function (user, newName) {
+    var newUser = user;
+    newUser.name = newName;
+    return newUser;
+  };
+
+  var user2 = changeName(user, "Haen");
+
+  console.log(user.name, user2.name); // Haen
+  console.log(user === user2); // true
+  ```
+
+- 해결방법)
+
+  ```js
+  var user = {
+    name: "Haen",
+    gender: "female",
+  };
+
+  var copyObejct = function (user) {
+    var result;
+    result = { ...user };
+    return result;
+  };
+
+  var user2 = copyObejct(user);
+  user2.name = "Ku";
+
+  console.log(user.name, user2.name); // Haen Ku
+  console.log(user === user2); // false
+  ```
+
+  <br>
+
+### 2) 얕은복사와 깊은 복사
+
+- `얕은 복사`는 바로 아래 단계의 값만 복사하는 방법이고,
+  `깊은 복사`는 내부의 모든 값들을 하나하나 찾아서 전부 복사하는 방법.
+
+- **얕은 복사**
+
+  ```js
+  var user = {
+    name: "Haen",
+    urls: {
+      portfolio: "https://github.com/abc",
+      blog: "http://blog.com",
+      facebook: "http://facebook.com/abc",
+    },
+  };
+
+  var user2 = copyObejct(user);
+  user2.name = "Ku";
+  user.urls.portfolio = "http:portfolio.com";
+  console.log(user.name === user2.name); // false
+  console.log(user.urls.portfolio === user2.urls.portfolio); // true
+  ```
+
+  user객체에 직접 속한 프로퍼티에 대해 복사해서 완전히 새로운 데이터가 만들어진 반면, 한 단계 더 들어간 urls의 내부 프로퍼티들은 기존 데이터를 그대로 참조함.
+
+- **깊은 복사**
+
+  - 객체의 깊은 복사를 수행하는 범용함수
+
+    ```js
+    var copyObjectDeep = function (target) {
+      var result = {};
+      if (typeof target === "object" && target !== null) {
+        for (var prop in target) {
+          result[prop] = copyObjectDeep(target[prop]);
+        }
+      } else {
+        result = target;
+      }
+      return result;
+    };
+    ```
+
+    target이 객체인 경우에는 내부 프로퍼티들을 순회하며 copyObjectDeep 함수를 `재귀적으로 호출`.
+
+  - JSON을 활용한 간단한 깊은 복사
+
+    ```js
+    var copyObjectViaJSON = function (target) {
+      return JSON.parse(JSON.stringify(target));
+    };
+    ```
+
+    [JSON과 JS Object의 차이점](https://velog.io/@kysung95/%EA%B0%9C%EB%B0%9C%EC%83%81%EC%8B%9D-JSON%EA%B3%BC-JavaScript-Object%EC%9D%98-%EC%B0%A8%EC%9D%B4%EC%A0%90)
+
+## 3. Undefined와 null
+- 자바스크립트에서 없음 을 나타내는 값이 두 가지 -> undefined , null
+### 1) Undefined
+- 사용자가 명시적으로 할당할 수도 있지만, 값이 존재하지 않을 때 자바스크립트 엔진이 자동으로 부여하는 경우도 있음.
+    
+    - 자바스크립트 엔진이 자동으로 부여하는 경우
+
+        - 자바스크립트 엔진은 사용자가 어떤 값을 지정할 것이라고 예상되는 상황임에도 실제로는 그렇게 하지 않았을 때 undefined 를 반환한다.
+
+            1. 값을 대입하지 않은 변수, 즉 데이터 영역의 메모리 주소를 지정하지 않은 식별자에 접근할 때
+            
+            2. 객체 내부의 존재하지 않는 프로퍼티에 접근하려고 할 때
+            
+            3. return 문이 없거나 호출되지 않는 함수의 실행 결과
+            
+            ```js
+           var a;
+            console.log(a);  // undefined -> 1. 값을 대입하지 않은 변수에 접근 시
+
+            var obj = { a: 1 };
+            console.log(obj.a);  // 1
+            console.log(obj.b);  // undefined -> 2. 존재하지 않은 프로퍼티에 접근 시
+            console.log(b);  // ReferenceError: b is not defined
+
+            var func = function() { };
+            var c = func();  // 3. 반환(return)값이 없으면 암묵적으로 undefined 를 반환
+            console.log(c);  // undefined
+            ```
+### 2) null
+- *명확하게 값이 비어있음을 나타내고 싶을 때 사용*
+- 이 의미를 잘 지킨다면, undefined 는 오직 `값을 대입하지 않은 변수에 접근하고자 할 때 자바스크립트 엔진이 암묵적으로 반혼해주는 값` 으로서만 존재할 수 있다.
+- typeof null === object 이다.
+
+    - 자바스크립트 자체 버그
+    <br>
+```js
+  // 변수가 null 인지 여부를 판단하는 방법
+
+  var n = null;
+  console.log(typeof n);  // object
+
+  // 동등 연산자(equality operator) (==) 로 비교할 경우 << 💩
+  console.log(n == undefined);  // true
+  console.log(n == null);  // true
+
+  // 일치 연산자(identity operator) (===) 로 비교할 경우 << 👍
+  console.log(n === undefined);  // false
+  console.log(n === null);  // true
 ```
+- 없음 을 나타내는 두 가지 → undefined, null
 
-2. 데이터 할당
- ```
-var a;     // 변수 a 선언
-a = 'abc'  // 변수 a 데이터 할당
-
-var a = 'abc'  // 변수 선언과 할당을 한번에(=초기화)
-
-// 선언과 할당 과정을 나눠서하든, 동시에(=초기화)하든 자바스크립트 엔진은 같은 동작을 수행한다.
-```
+    - undefined → 어떤 변수에 값이 존재하지 않을  경우
+    - null → 사용자가 명시적으로 “없음"을 표현하고 싶은 경우 직접 대입한 값
+---
+# ***Chapter 2***
