@@ -25,3 +25,5 @@ var ES5 = function(name) {
   var es6Instance = new ES6('es6');
   console.log(ES6.staticMethod()); // es6 staticMethod
   console.log(es6Instance.method()); // es6 method
+
+  // es5 와 es6의 클래스 문법 비교
