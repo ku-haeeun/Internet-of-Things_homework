@@ -14,3 +14,4 @@ var extendClass2 = (function() {
       return SubClass;
     };
   })();
+  // 클래스 상속 및 추상화 방법- 빈 함수를 활용
